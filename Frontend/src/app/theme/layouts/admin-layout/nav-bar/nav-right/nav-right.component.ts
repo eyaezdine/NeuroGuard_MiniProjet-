@@ -1,9 +1,10 @@
 // angular import
-import { Component, output, inject, input } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, output, inject, input, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
+import { AuthService } from 'src/app/services/auth.service';
 
 // third party
 
@@ -35,8 +36,10 @@ import {
   templateUrl: './nav-right.component.html',
   styleUrls: ['./nav-right.component.scss']
 })
-export class NavRightComponent {
+export class NavRightComponent implements OnInit {
   private iconService = inject(IconService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   // public props
   styleSelectorToggle = input<boolean>();
@@ -44,6 +47,7 @@ export class NavRightComponent {
   windowWidth: number;
   screenFull: boolean = true;
   direction: string = 'ltr';
+  user: any;
 
   // constructor
   constructor() {
@@ -72,6 +76,15 @@ export class NavRightComponent {
     );
   }
 
+  ngOnInit() {
+    this.user = this.authService.getUser();
+  }
+
+  handleLogout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   profile = [
     {
       icon: 'edit',
@@ -88,10 +101,6 @@ export class NavRightComponent {
     {
       icon: 'wallet',
       title: 'Billing'
-    },
-    {
-      icon: 'logout',
-      title: 'Logout'
     }
   ];
 

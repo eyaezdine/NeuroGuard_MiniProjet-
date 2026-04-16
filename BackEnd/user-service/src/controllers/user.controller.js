@@ -34,4 +34,13 @@ const getUsersByRole = async (req, res) => {
     }
 };
 
-module.exports = { getUserById, getUserByUsername, getUsersByRole };
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.json({ success: true, data: users.map(u => u.toJSON()) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+module.exports = { getUserById, getUserByUsername, getUsersByRole, getAllUsers };

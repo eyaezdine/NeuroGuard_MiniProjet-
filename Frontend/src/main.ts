@@ -9,6 +9,11 @@ if (environment.production) {
   enableProdMode();
 }
 
+import { provideHttpClient } from '@angular/common/http';
+
 bootstrapApplication(AppComponent, {
-  providers: [importProvidersFrom(BrowserModule, AppRoutingModule)]
+  providers: [
+    importProvidersFrom(BrowserModule, AppRoutingModule),
+    provideHttpClient()
+  ]
 }).catch((err) => console.error(err));
