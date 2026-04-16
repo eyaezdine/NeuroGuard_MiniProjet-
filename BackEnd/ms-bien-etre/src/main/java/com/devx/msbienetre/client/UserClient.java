@@ -10,12 +10,12 @@ import java.util.List;
 @FeignClient(name = "ms-users")
 public interface UserClient {
 
-    @GetMapping("/username/{username}")
+    @GetMapping("/api/users/username/{username}")
     UserDTO getUserByUsername(@PathVariable("username") String username);
 
-    @GetMapping("/{id}")
+    @GetMapping("/api/users/{id}")
     UserDTO getUserById(@PathVariable("id") String id);
 
-    @GetMapping("/role/{role}")
+    @GetMapping("/api/users/role/{role}")
     List<UserDTO> getUsersByRole(@PathVariable("role") String role);
 }

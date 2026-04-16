@@ -1,0 +1,36 @@
+<div class="ms-page">
+  <div class="ms-header">
+    <div>
+      <h2>Well-being Monitoring</h2>
+      <p>Managed via <strong>ms-bien-etre</strong> (Spring Boot · Port 8085) → Gateway <code>/api/wellbeing/**</code></p>
+    </div>
+    <div class="ms-badge online"><span class="dot"></span> Port 8085</div>
+  </div>
+  <div class="ms-cards">
+    <div class="ms-card">
+      <div class="card-icon" style="background: #fde8e8;">❤️</div>
+      <h4>Wellbeing Records</h4>
+      <p>Track patient wellbeing data via <code>GET /api/wellbeing</code></p>
+    </div>
+    <div class="ms-card">
+      <div class="card-icon" style="background: #e8fdf0;">🏃</div>
+      <h4>Activity Tracking</h4>
+      <p>Log patient activities via <code>/api/activities</code></p>
+    </div>
+    <div class="ms-card">
+      <div class="card-icon" style="background: #f0e8fd;">📊</div>
+      <h4>Reports</h4>
+      <p>Generate wellbeing analysis reports for patients.</p>
+    </div>
+  </div>
+  <div class="ms-api-section">
+    <h3>API Endpoints (via Gateway → localhost:8083)</h3>
+    <div class="endpoint-list">
+      <div class="endpoint"><span class="method get">GET</span><code>/api/wellbeing</code></div>
+      <div class="endpoint"><span class="method post">POST</span><code>/api/wellbeing</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/api/wellbeing/:id</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/api/activities</code></div>
+      <div class="endpoint"><span class="method post">POST</span><code>/api/activities</code></div>
+    </div>
+  </div>
+</div>

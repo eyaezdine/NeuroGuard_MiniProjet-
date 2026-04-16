@@ -1,0 +1,36 @@
+<div class="ms-page">
+  <div class="ms-header">
+    <div>
+      <h2>Delivery Tracking</h2>
+      <p>Managed via <strong>ms_livraison</strong> (Spring Boot · Port 8086) → Gateway <code>/api/livraisons/**</code></p>
+    </div>
+    <div class="ms-badge online"><span class="dot"></span> Port 8086</div>
+  </div>
+  <div class="ms-cards">
+    <div class="ms-card">
+      <div class="card-icon" style="background: #e8f4fd;">🚗</div>
+      <h4>Create Delivery</h4>
+      <p>Register a new delivery order via <code>POST /api/livraisons</code></p>
+    </div>
+    <div class="ms-card">
+      <div class="card-icon" style="background: #e8fdf0;">📍</div>
+      <h4>Track Delivery</h4>
+      <p>Track delivery status via <code>GET /api/livraisons/:id</code></p>
+    </div>
+    <div class="ms-card">
+      <div class="card-icon" style="background: #fdf8e8;">📦</div>
+      <h4>All Deliveries</h4>
+      <p>List all deliveries via <code>GET /api/livraisons</code></p>
+    </div>
+  </div>
+  <div class="ms-api-section">
+    <h3>API Endpoints (via Gateway → localhost:8083)</h3>
+    <div class="endpoint-list">
+      <div class="endpoint"><span class="method get">GET</span><code>/api/livraisons</code></div>
+      <div class="endpoint"><span class="method post">POST</span><code>/api/livraisons</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/api/livraisons/:id</code></div>
+      <div class="endpoint"><span class="method put">PUT</span><code>/api/livraisons/:id</code></div>
+      <div class="endpoint"><span class="method delete">DELETE</span><code>/api/livraisons/:id</code></div>
+    </div>
+  </div>
+</div>
