@@ -1,0 +1,36 @@
+<div class="ms-page">
+  <div class="ms-header">
+    <div>
+      <h2>Medical History</h2>
+      <p>Managed via <strong>medical-history-service</strong> (Spring Boot · Port 8082) → Gateway <code>/api/patient/medical-history/**</code></p>
+    </div>
+    <div class="ms-badge online"><span class="dot"></span> Port 8082</div>
+  </div>
+  <div class="ms-cards">
+    <div class="ms-card">
+      <div class="card-icon" style="background: #fde8e8;">📂</div>
+      <h4>Patient Records</h4>
+      <p>Access patient medical history via <code>GET /api/patient/medical-history</code></p>
+    </div>
+    <div class="ms-card">
+      <div class="card-icon" style="background: #e8fdf0;">💊</div>
+      <h4>Provider View</h4>
+      <p>Provider-specific records via <code>/api/provider/medical-history</code></p>
+    </div>
+    <div class="ms-card">
+      <div class="card-icon" style="background: #f0e8fd;">🧑‍⚕️</div>
+      <h4>Caregiver View</h4>
+      <p>Caregiver access via <code>/api/caregiver/medical-history</code></p>
+    </div>
+  </div>
+  <div class="ms-api-section">
+    <h3>API Endpoints (via Gateway → localhost:8083)</h3>
+    <div class="endpoint-list">
+      <div class="endpoint"><span class="method get">GET</span><code>/api/patient/medical-history</code></div>
+      <div class="endpoint"><span class="method post">POST</span><code>/api/patient/medical-history</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/api/provider/medical-history</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/api/caregiver/medical-history</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/files/**</code></div>
+    </div>
+  </div>
+</div>

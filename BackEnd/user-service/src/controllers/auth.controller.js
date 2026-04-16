@@ -33,6 +33,16 @@ const register = async (req, res) => {
         });
     } catch (error) {
         console.error('Register error:', error);
+        
+        // Handle Mongoose validation errors
+        if (error.name === 'ValidationError') {
+            const message = Object.values(error.errors).map(val => val.message).join(', ');
+            return res.status(400).json({
+                success: false,
+                message: message,
+            });
+        }
+
         res.status(500).json({
             success: false,
             message: 'Internal server error',

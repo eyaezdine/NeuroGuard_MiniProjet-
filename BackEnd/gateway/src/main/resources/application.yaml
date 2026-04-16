@@ -56,6 +56,27 @@ spring:
           uri: lb://medical-history-service
           predicates:
             - Path=/test
+        - id: bien-etre
+          uri: lb://ms-bien-etre
+          predicates:
+            - Path=/api/wellbeing/**
+        - id: bien-etre-activities
+          uri: lb://ms-bien-etre
+          predicates:
+            - Path=/api/activities/**
+        - id: consultation
+          uri: lb://consultation-service
+          predicates:
+            - Path=/api/consultations/**
+        - id: forum
+          uri: lb://forum-service
+          predicates:
+            - Path=/api/forum/**
+        - id: livraison
+          uri: lb://livraison
+          predicates:
+            - Path=/api/livraisons/**
+
 
 logging:
   level:
