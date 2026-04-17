@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ms-bien-etre" />
+        <module name="ConfigServer" />
+        <module name="ms_livraison" />
+        <module name="eureka-server" />
+        <module name="gateway" />
+        <module name="forum-service" />
+      </profile>
+      <profile name="Annotation profile for consultation-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="consultation-service" />
+      </profile>
+      <profile name="Annotation profile for medical-history-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="medical-history-service" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ConfigServer" options="-parameters" />
+      <module name="consultation-service" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="forum-service" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="medical-history-service" options="-parameters" />
+      <module name="ms-bien-etre" options="-parameters" />
+      <module name="ms_livraison" options="-parameters" />
+    </option>
+  </component>
+</project>

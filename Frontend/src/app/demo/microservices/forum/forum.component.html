@@ -1,23 +1,254 @@
-<div class="ms-page">
-  <div class="ms-header">
-    <div>
-      <h2>Forum</h2>
-      <p>Managed via <strong>forum-service</strong> → Gateway <code>/api/forum/**</code></p>
-    </div>
-    <div class="ms-badge offline"><span class="dot"></span> In Development</div>
-  </div>
-  <div class="ms-placeholder">
-    <div class="placeholder-icon">💬</div>
-    <h3>Forum Service — Coming Soon</h3>
-    <p>The forum-service microservice is still being implemented. This section will display forum posts, threads, and comments once the service is ready.</p>
-    <div class="ms-api-section" style="margin-top: 2rem;">
-      <h3>Planned API Endpoints (via Gateway → localhost:8083)</h3>
-      <div class="endpoint-list">
-        <div class="endpoint"><span class="method get">GET</span><code>/api/forum/posts</code></div>
-        <div class="endpoint"><span class="method post">POST</span><code>/api/forum/posts</code></div>
-        <div class="endpoint"><span class="method get">GET</span><code>/api/forum/posts/:id/comments</code></div>
-        <div class="endpoint"><span class="method post">POST</span><code>/api/forum/posts/:id/comments</code></div>
+<div class="fp">
+
+  <!-- ════════ HEADER ════════ -->
+  <div class="fp-header">
+    <div class="fp-header-left">
+      <div class="fp-logo">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div>
+        <h2 class="fp-title">NeuroGuard Discussions</h2>
+        <p class="fp-sub">Managed via forum-service · Port 8083</p>
       </div>
     </div>
+    <div class="fp-header-right">
+      <span class="badge-status" [class.offline]="!!error">
+        <i class="dot"></i>{{ error ? 'Backend Offline' : 'System Online' }}
+      </span>
+      <button class="btn-primary-sm" (click)="toggleNewPostForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        {{ showNewPostForm ? 'Cancel' : 'New Post' }}
+      </button>
+    </div>
   </div>
+
+  <!-- ════════ STATS ════════ -->
+  <div class="stats-grid">
+    <div class="stat"><span class="stat-n">{{ totalPosts }}</span><span class="stat-l">Total Posts</span></div>
+    <div class="stat"><span class="stat-n">{{ totalComments }}</span><span class="stat-l">Comments</span></div>
+    <div class="stat"><span class="stat-n">{{ totalLikes }}</span><span class="stat-l">Likes</span></div>
+    <div class="stat"><span class="stat-n">{{ uniqueAuthors }}</span><span class="stat-l">Active Users</span></div>
+  </div>
+
+  <!-- ════════ TOAST ════════ -->
+  <div class="toast" [class.show]="toast" [class.toast-error]="toastKind==='error'">
+    <svg *ngIf="toastKind==='success'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <svg *ngIf="toastKind==='error'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    {{ toast }}
+  </div>
+
+  <!-- ════════ NEW POST FORM ════════ -->
+  <div class="new-post-form" *ngIf="showNewPostForm">
+    <div class="npf-head">
+      <div class="av" [style.background]="color(me())">{{ initials(me()) }}</div>
+      <span class="npf-author">{{ me() }}</span>
+      <span class="npf-label ms-auto">Creating a new discussion</span>
+    </div>
+    <form [formGroup]="newPostForm" (ngSubmit)="submitNewPost()">
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <input class="fc-input" formControlName="title" placeholder="Descriptive title..." type="text"/>
+          <div class="fc-hint" *ngIf="newPostForm.get('title')?.touched && newPostForm.get('title')?.invalid">
+            Title must be 5 to 120 characters.
+          </div>
+        </div>
+        <div class="form-group category-select">
+          <select class="fc-input" formControlName="category">
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <textarea class="fc-textarea" formControlName="content" rows="4" placeholder="Discuss medical inquiries, wellness tips, or general updates..."></textarea>
+        <div class="fc-hint" *ngIf="newPostForm.get('content')?.touched && newPostForm.get('content')?.invalid">
+          Content must be at least 10 characters.
+        </div>
+      </div>
+      <div class="npf-actions">
+        <span class="char-count">{{ (newPostForm.value.content||'').length }} characters</span>
+        <button type="button" class="btn-ghost" (click)="toggleNewPostForm()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="newPostForm.invalid || submitting">
+          <span *ngIf="!submitting">Publish Post</span>
+          <span *ngIf="submitting" class="spin-sm"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ════════ TOOLBAR ════════ -->
+  <div class="toolbar">
+    <div class="search-box">
+      <svg class="s-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="s-input" type="text" placeholder="Search by title, author, category..." [(ngModel)]="searchQuery" (ngModelChange)="filter()"/>
+      <button *ngIf="searchQuery" class="s-clear" (click)="clearSearch()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    
+    <select class="sort-sel category-filter" [(ngModel)]="categoryFilter" (ngModelChange)="filter()">
+      <option value="All">All Categories</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+
+    <select class="sort-sel" [(ngModel)]="sortBy" (ngModelChange)="filter()">
+      <option value="newest">Newest first</option>
+      <option value="oldest">Oldest first</option>
+      <option value="mostLiked">Most liked</option>
+      <option value="mostComments">Most comments</option>
+    </select>
+    
+    <button class="btn-icon" (click)="loadPosts()" [disabled]="loading" title="Refresh">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spin]="loading"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </button>
+  </div>
+
+  <!-- ════════ ERROR BANNER ════════ -->
+  <div class="error-banner" *ngIf="error && !toast">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    {{ error }}
+    <button class="btn-retry" (click)="loadPosts()">Retry Connection</button>
+  </div>
+
+  <!-- ════════ LOADING SKELETON ════════ -->
+  <div class="skeletons" *ngIf="loading">
+    <div class="sk-card" *ngFor="let i of [1,2,3]">
+      <div class="sk-row"><div class="sk sk-av"></div><div class="sk-col"><div class="sk sk-line w50"></div><div class="sk sk-line w25"></div></div></div>
+      <div class="sk sk-line w80 mt10"></div>
+      <div class="sk sk-line wfull mt8"></div>
+      <div class="sk sk-line w70 mt8"></div>
+    </div>
+  </div>
+
+  <!-- ════════ EMPTY ════════ -->
+  <div class="empty" *ngIf="!loading && filteredPosts.length === 0 && !error">
+    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <h4>{{ searchQuery || categoryFilter !== 'All' ? 'No posts match your filters' : 'No posts yet' }}</h4>
+    <p>{{ searchQuery || categoryFilter !== 'All' ? 'Try adjusting your search criteria.' : 'Be the first to start a NeuroGuard discussion!' }}</p>
+    <button class="btn-primary" *ngIf="!searchQuery && categoryFilter === 'All'" (click)="toggleNewPostForm()">Create First Post</button>
+    <button class="btn-ghost" *ngIf="searchQuery || categoryFilter !== 'All'" (click)="clearSearch(); categoryFilter = 'All'; filter()">Clear Filters</button>
+  </div>
+
+  <!-- ════════ POSTS LIST ════════ -->
+  <div class="posts" *ngIf="!loading">
+    <div class="post-card" *ngFor="let post of filteredPosts; trackBy: trackId">
+
+      <!-- ── Edit mode ── -->
+      <ng-container *ngIf="isEditing(post)">
+        <form [formGroup]="editForm" (ngSubmit)="submitEdit(post)" class="edit-form">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <input class="fc-input" formControlName="title" type="text" placeholder="Title"/>
+            </div>
+            <div class="form-group category-select">
+              <select class="fc-input" formControlName="category">
+                <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <textarea class="fc-textarea" formControlName="content" rows="4" placeholder="Content"></textarea>
+          </div>
+          <div class="edit-actions">
+            <button type="button" class="btn-ghost" (click)="cancelEdit()">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="editForm.invalid || submitting">
+              <span *ngIf="!submitting">Save Changes</span>
+              <span *ngIf="submitting" class="spin-sm"></span>
+            </button>
+          </div>
+        </form>
+      </ng-container>
+
+      <!-- ── Normal view ── -->
+      <ng-container *ngIf="!isEditing(post)">
+        <!-- Author row -->
+        <div class="pc-top">
+          <div class="av" [style.background]="color(post.author)">{{ initials(post.author) }}</div>
+          <div class="pc-meta">
+            <span class="pc-author">{{ post.author }}</span>
+            <span class="pc-date">{{ post.createdAt ? (post.createdAt | date:'MMM d, y · h:mm a') : 'Just now' }}</span>
+          </div>
+          <div class="pc-cat-badge" [ngClass]="categoryColor(post.category!)" *ngIf="post.category">
+            {{ post.category }}
+          </div>
+          <div class="pc-crud">
+            <button class="ic-btn edit" (click)="startEdit(post)" title="Edit">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="ic-btn del" (click)="askDelete(post.id!+'');" title="Delete">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <h3 class="pc-title">{{ post.title }}</h3>
+        <p class="pc-body">{{ post.content }}</p>
+
+        <!-- Action bar (like / comment / share) -->
+        <div class="pc-bar">
+          <button class="bar-btn like-btn" [class.liked]="isLiked(post)" (click)="toggleLike(post)">
+            <svg width="16" height="16" viewBox="0 0 24 24" [attr.fill]="isLiked(post)?'currentColor':'none'" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.501 5.501 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>{{ likeCount(post) }}</span> Like{{ likeCount(post)!==1?'s':'' }}
+          </button>
+
+          <button class="bar-btn" (click)="toggleComments(post)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>{{ commentCount(post) }}</span> Comment{{ commentCount(post)!==1?'s':'' }}
+            <svg class="chev" [class.open]="isExpanded(post)" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+
+          <button class="bar-btn share-btn" (click)="sharePost(post)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+          </button>
+        </div>
+
+        <!-- Delete confirm inline -->
+        <div class="del-confirm" *ngIf="pendingDeleteId === (post.id+'')" >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Delete "<strong>{{ post.title | slice:0:30 }}...</strong>"? This action is permanent.</span>
+          <button class="btn-ghost" (click)="cancelDeleteConfirm()">Cancel</button>
+          <button class="btn-danger" (click)="confirmDelete()" [disabled]="submitting">
+            <span *ngIf="!submitting">Confirm Delete</span>
+            <span *ngIf="submitting" class="spin-sm"></span>
+          </button>
+        </div>
+
+        <!-- Comments panel -->
+        <div class="comments-panel" *ngIf="isExpanded(post)">
+          <div class="comment-list">
+            <div class="comment" *ngFor="let c of post.comments; trackBy: trackId">
+              <div class="av sm" [style.background]="color(c.author)">{{ initials(c.author) }}</div>
+              <div class="c-body">
+                <div class="c-meta">
+                  <span class="c-author">{{ c.author }}</span>
+                  <span class="c-date" *ngIf="c.createdAt">{{ c.createdAt | date:'MMM d · h:mm a' }}</span>
+                </div>
+                <p class="c-text">{{ c.content }}</p>
+              </div>
+              <button class="del-c-btn" (click)="deleteComment(post,c)" title="Delete comment">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </button>
+            </div>
+            <div class="no-comments" *ngIf="!post.comments || post.comments.length===0">No comments yet — be the first to reply!</div>
+          </div>
+          <!-- Add comment -->
+          <form class="add-c" [formGroup]="commentFormFor(post.id!)" (ngSubmit)="submitComment(post)">
+            <div class="av sm" [style.background]="color(me())">{{ initials(me()) }}</div>
+            <input class="c-input" type="text" formControlName="content" placeholder="Share your insight..."/>
+            <button class="btn-send" type="submit" [disabled]="commentFormFor(post.id!).invalid">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </form>
+        </div>
+      </ng-container>
+
+    </div><!-- /post-card -->
+  </div><!-- /posts -->
+
+  <!-- ════════ RESULT COUNT ════════ -->
+  <div class="result-count" *ngIf="!loading && filteredPosts.length > 0">
+    Showing {{ filteredPosts.length }} of {{ totalPosts }} posts
+  </div>
+
 </div>
