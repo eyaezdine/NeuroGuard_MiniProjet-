@@ -1,7 +1,7 @@
 package com.devx.msbienetre.service;
 
 import com.devx.msbienetre.client.UserClient;
-import com.devx.msbienetre.dto.UserDTO;
+import com.devx.msbienetre.dto.UserApiResponse;
 import com.devx.msbienetre.entity.Activity;
 import com.devx.msbienetre.repository.ActivityRepository;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,8 @@ public class ActivityService {
     public Activity createActivity(Activity activity) {
         // Validate patient existence using Feign Client
         try {
-            UserDTO patient = userClient.getUserById(activity.getUserId());
-            if (patient == null) {
+            UserApiResponse resp = userClient.getUserById(activity.getUserId());
+            if (resp == null || !resp.isSuccess() || resp.getData() == null) {
                 throw new RuntimeException("Patient not found in User Service");
             }
         } catch (Exception e) {

@@ -1,7 +1,7 @@
 package com.devx.msbienetre.service;
 
 import com.devx.msbienetre.client.UserClient;
-import com.devx.msbienetre.dto.UserDTO;
+import com.devx.msbienetre.dto.UserApiResponse;
 import com.devx.msbienetre.entity.Wellbeing;
 import com.devx.msbienetre.repository.WellbeingRepository;
 import org.springframework.stereotype.Service;
@@ -21,10 +21,9 @@ public class WellbeingService {
 
     public Wellbeing createWellbeing(Wellbeing wellbeing) {
 
-        // Validate user existence using Feign Client
         try {
-            UserDTO user = userClient.getUserById(wellbeing.getUserId());
-            if (user == null) {
+            UserApiResponse resp = userClient.getUserById(wellbeing.getUserId());
+            if (resp == null || !resp.isSuccess() || resp.getData() == null) {
                 throw new RuntimeException("User not found in User Service");
             }
         } catch (Exception e) {
