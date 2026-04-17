@@ -1,5 +1,4 @@
 const User = require('../models/User');
-const { generateToken } = require('../utils/token');
 
 const register = async (req, res) => {
     try {
@@ -21,14 +20,11 @@ const register = async (req, res) => {
             role,
         });
 
-        const token = generateToken(user._id, user.role, user.email);
-
         res.status(201).json({
             success: true,
             message: 'Account created successfully',
             data: {
                 user: user.toJSON(),
-                token,
             },
         });
     } catch (error) {
@@ -70,14 +66,11 @@ const login = async (req, res) => {
             });
         }
 
-        const token = generateToken(user._id, user.role, user.email);
-
         res.status(200).json({
             success: true,
             message: 'Login successful',
             data: {
                 user: user.toJSON(),
-                token,
             },
         });
     } catch (error) {

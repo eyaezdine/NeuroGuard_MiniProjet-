@@ -65,8 +65,7 @@ user-service/
 │   ├── models/User.js          # User schema & password hashing
 │   ├── controllers/auth.controller.js  # Register & login logic
 │   ├── routes/auth.routes.js   # Route definitions
-│   ├── middleware/validate.js  # Input validation rules
-│   └── utils/token.js          # JWT helpers
+│   └── middleware/validate.js  # Input validation rules
 ├── server.js                   # Entry point
 ├── .env.example                # Env template
 └── package.json
@@ -78,5 +77,3 @@ user-service/
 |----------|---------|-------------|
 | `PORT` | `3001` | Server port |
 | `MONGO_URI` | `mongodb://localhost:27017/neuroguard-users` | MongoDB connection string |
-| `JWT_SECRET` | — | Secret key for signing JWTs |
-| `JWT_EXPIRES_IN` | `7d` | Token expiration duration |

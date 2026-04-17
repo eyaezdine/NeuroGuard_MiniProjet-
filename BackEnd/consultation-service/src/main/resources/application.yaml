@@ -29,9 +29,6 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
 
-jwt:
-  secret: XDkzF2YNPA/7vXmPYJmaACjY6VBhwHJbr4pzPF5jguE=   # must match user-service secret
-
 # Feign client configuration for user-service
 user-service:
   url: http://localhost:8081   # or use service discovery, Feign will resolve via Eureka

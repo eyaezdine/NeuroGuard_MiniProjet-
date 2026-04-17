@@ -14,8 +14,7 @@ export class AuthService {
   login(credentials: { email: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this.gatewayUrl}/api/auth/login`, credentials).pipe(
       tap(response => {
-        if (response.success && response.data.token) {
-          localStorage.setItem('token', response.data.token);
+        if (response.success && response.data.user) {
           localStorage.setItem('user', JSON.stringify(response.data.user));
         }
       })
@@ -25,8 +24,7 @@ export class AuthService {
   register(userData: any): Observable<any> {
     return this.http.post<any>(`${this.gatewayUrl}/api/auth/register`, userData).pipe(
       tap(response => {
-        if (response.success && response.data.token) {
-          localStorage.setItem('token', response.data.token);
+        if (response.success && response.data.user) {
           localStorage.setItem('user', JSON.stringify(response.data.user));
         }
       })
@@ -34,13 +32,8 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('token');
   }
 
   getUser(): any {
@@ -49,6 +42,6 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    return !!this.getUser();
   }
 }

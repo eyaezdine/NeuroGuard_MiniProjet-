@@ -38,9 +38,6 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
 
-jwt:
-  secret: XDkzF2YNPA/7vXmPYJmaACjY6VBhwHJbr4pzPF5jguE=   # same secret as Node.js service
-
 # Feign client for user-service (Node.js)
 user-service:
   url: http://localhost:8081/api   # base URL of Node.js user service
