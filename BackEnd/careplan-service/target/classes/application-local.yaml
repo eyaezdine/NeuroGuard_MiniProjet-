@@ -1,0 +1,11 @@
+# Fichier local : NE PAS COMMITER (déjà dans .gitignore)
+# Contient le mot de passe Gmail pour l'envoi d'emails.
+# Lancer avec : --spring.profiles.active=local
+
+spring:
+  mail:
+    password: lcxvgpomihxazpvb
+
+neuroguard:
+  mail:
+    enabled: true
