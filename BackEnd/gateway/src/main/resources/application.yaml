@@ -56,11 +56,11 @@ spring:
           uri: lb://medical-history-service
           predicates:
             - Path=/test
-        - id: bien-etre
+        - id: wellbeing
           uri: lb://ms-bien-etre
           predicates:
             - Path=/api/wellbeing/**
-        - id: bien-etre-activities
+        - id: activities
           uri: lb://ms-bien-etre
           predicates:
             - Path=/api/activities/**

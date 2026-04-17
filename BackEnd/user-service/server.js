@@ -70,7 +70,7 @@ startServer();
 // ---------------------------------------------------------------------
 const client = new Eureka({
   instance: {
-    app: process.env.EUREKA_SERVICE_NAME || 'user-microservice',
+    app: process.env.EUREKA_SERVICE_NAME || 'user-service',
     hostName: os.hostname(),
     ipAddr: '127.0.0.1', // or get from network interface
     statusPageUrl: `http://${process.env.EUREKA_INSTANCE_HOST}:${PORT}/info`, // optional health endpoint
@@ -78,7 +78,7 @@ const client = new Eureka({
       $: PORT,
       '@enabled': true,
     },
-    vipAddress: process.env.EUREKA_SERVICE_NAME || 'user-microservice',
+    vipAddress: process.env.EUREKA_SERVICE_NAME || 'user-service',
     dataCenterInfo: {
       '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
       name: 'MyOwn',
