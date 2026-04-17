@@ -1,0 +1,29 @@
+@echo off
+echo Starting NeuroGuard Microservices and Frontend...
+
+echo Starting Eureka Server...
+start "Eureka Server" cmd /k "cd /d BackEnd\eureka-server && mvn spring-boot:run"
+
+echo Waiting 10 seconds for Eureka to initialize...
+timeout /t 10 /nobreak >nul
+
+echo Starting Gateway Service...
+start "Gateway Service" cmd /k "cd /d BackEnd\gateway && mvn spring-boot:run"
+
+echo Starting User Service...
+start "User Service" cmd /k "cd /d BackEnd\user-service && npm start"
+
+echo Starting Consultation Service...
+start "Consultation Service" cmd /k "cd /d BackEnd\consultation-service && mvn spring-boot:run"
+
+echo Starting Careplan Service...
+start "Careplan Service" cmd /k "cd /d BackEnd\careplan-service && mvn spring-boot:run"
+
+echo Starting medical history Service...
+start "medical-history-service" cmd /k "cd /d BackEnd\medical-history-service && mvn spring-boot:run"
+
+echo Starting Angular Frontend...
+start "Angular Frontend" cmd /k "cd /d FrontEnd && ng serve"
+
+echo All services have been launched in separate windows!
+pause

@@ -1,0 +1,7 @@
+com\esprit\microservice\careplanservice\config\RabbitMQConfig.class
+com\esprit\microservice\careplanservice\feign\MedicalHistoryClient.class
+com\esprit\microservice\careplanservice\listener\ConsultationEventListener.class
+com\esprit\microservice\careplanservice\config\SecurityConfig.class
+com\esprit\microservice\careplanservice\publisher\CarePlanEventPublisher.class
+com\esprit\microservice\careplanservice\CarePlanServiceApplication.class
+com\esprit\microservice\careplanservice\event\CarePlanEvent.class

@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: careplan-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/careplandb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: ""                     # ← set your MySQL password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update               # will create/alter tables with VARCHAR columns
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+
+jwt:
+  secret: XDkzF2YNPA/7vXmPYJmaACjY6VbhWHJbr4pZPF5jguE=     # ← must match the secret in Node.js .env
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+security:
+  oauth2:
+    resourceserver:
+      jwt:
+        issuer-uri: http://localhost:8081/realms/neuroguard
+        jwk-set-uri: http://localhost:8081/realms/neuroguard/protocol/openid-connect/certs
+
+server:
+  port: 8082
+
+logging:
+  level:
+    com.esprit.microservice.careplanservice: DEBUG
+    com.esprit.microservice.careplanservice.feign: DEBUG
+    org.springframework.security: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000

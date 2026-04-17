@@ -1,0 +1,94 @@
+server:
+  port: 8083
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
+
+spring:
+  application:
+    name: gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/neuroguard
+          jwk-set-uri: http://localhost:8081/realms/neuroguard/protocol/openid-connect/certs
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+      routes:
+        - id: user-auth
+          uri: lb://user-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - OAuthTokenRelay=
+        - id: user-users
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - OAuthTokenRelay=
+        - id: careplan
+          uri: lb://careplan-service
+          predicates:
+            - Path=/api/careplan/**
+          filters:
+            - OAuthTokenRelay=
+        - id: consultation
+          uri: lb://consultation-service
+          predicates:
+            - Path=/api/consultation/**
+          filters:
+            - OAuthTokenRelay=
+        - id: medical-provider
+          uri: lb://medical-history-service
+          predicates:
+            - Path=/api/provider/medical-history/**
+          filters:
+            - OAuthTokenRelay=
+        - id: medical-patient
+          uri: lb://medical-history-service
+          predicates:
+            - Path=/api/patient/medical-history/**
+          filters:
+            - OAuthTokenRelay=
+        - id: medical-caregiver
+          uri: lb://medical-history-service
+          predicates:
+            - Path=/api/caregiver/medical-history/**
+          filters:
+            - OAuthTokenRelay=
+        - id: medical-files
+          uri: lb://medical-history-service
+          predicates:
+            - Path=/files/**
+          filters:
+            - OAuthTokenRelay=
+        - id: medical-test
+          uri: lb://medical-history-service
+          predicates:
+            - Path=/test
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+    org.springframework.security: DEBUG
