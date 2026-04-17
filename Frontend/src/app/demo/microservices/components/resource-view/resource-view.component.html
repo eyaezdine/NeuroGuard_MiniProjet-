@@ -1,0 +1,12 @@
+<section class="ms-api-section">
+  <h3>{{ title }}</h3>
+
+  <div *ngIf="!data" class="ms-loading">Select an item to view details.</div>
+
+  <div *ngIf="data" class="ms-detail-grid">
+    <div class="ms-detail-row" *ngFor="let row of asEntries()">
+      <span class="ms-detail-key">{{ row.key }}</span>
+      <span class="ms-detail-value">{{ row.value }}</span>
+    </div>
+  </div>
+</section>

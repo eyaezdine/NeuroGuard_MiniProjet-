@@ -27,7 +27,9 @@ export class UserManagementComponent implements OnInit {
     // The backend returns { success: true, data: [users...] }
     this.http.get<any>(`${this.gatewayUrl}/api/users`).subscribe({
       next: (response) => {
-        if (response.success) {
+        if (Array.isArray(response)) {
+          this.users = response;
+        } else if (response.success) {
           this.users = response.data;
         } else {
           this.error = 'Failed to fetch users.';

@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class MedicalHistoryResponse {
     private Long id;
-    private String patientId;
+    private Long patientId;
     private String patientName;
     private String diagnosis;
     private LocalDate diagnosisDate;
@@ -24,11 +24,30 @@ public class MedicalHistoryResponse {
     private String environmentalAllergies;
     private String foodAllergies;
     private List<Surgery> surgeries;
-    private List<String> providerIds;
+    private List<Long> providerIds;
     private List<String> providerNames;
-    private List<String> caregiverIds;
+    private List<Long> caregiverIds;
     private List<String> caregiverNames;
     private List<FileDto> files;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // ---------- NEW FIELDS ----------
+    private Integer mmse;
+    private Integer functionalAssessment;
+    private Integer adl;
+    private Boolean memoryComplaints;
+    private Boolean behavioralProblems;
+    private Boolean smoking;
+    private Boolean cardiovascularDisease;
+    private Boolean diabetes;
+    private Boolean depression;
+    private Boolean headInjury;
+    private Boolean hypertension;
+    private Integer alcoholConsumption;
+    private Integer physicalActivity;
+    private Integer dietQuality;
+    private Integer sleepQuality;
+    private Double bmi;
+    private Integer cholesterolTotal;
 }

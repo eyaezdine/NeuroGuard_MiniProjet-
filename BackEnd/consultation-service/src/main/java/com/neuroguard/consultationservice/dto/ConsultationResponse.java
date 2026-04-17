@@ -14,7 +14,9 @@ public class ConsultationResponse {
     private ConsultationStatus status;
     private String meetingLink;
     private Long providerId;
+    private String providerName;
     private Long patientId;
+    private String patientName;
     private Long caregiverId;
     private LocalDateTime createdAt;
 
@@ -46,8 +48,14 @@ public class ConsultationResponse {
     public Long getProviderId() { return providerId; }
     public void setProviderId(Long providerId) { this.providerId = providerId; }
 
+    public String getProviderName() { return providerName; }
+    public void setProviderName(String providerName) { this.providerName = providerName; }
+
     public Long getPatientId() { return patientId; }
     public void setPatientId(Long patientId) { this.patientId = patientId; }
+
+    public String getPatientName() { return patientName; }
+    public void setPatientName(String patientName) { this.patientName = patientName; }
 
     public Long getCaregiverId() { return caregiverId; }
     public void setCaregiverId(Long caregiverId) { this.caregiverId = caregiverId; }

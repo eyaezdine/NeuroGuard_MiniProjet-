@@ -7,11 +7,12 @@ import java.util.UUID;
 @Service
 public class ZoomService {
 
-    // Simulation de création d'une réunion Zoom
+    // Création d'une salle Jitsi Meet (gratuit, sans clé API)
+    // La vraie URL de rejoindre est générée par getJoinLink avec l'ID de la consultation
     public MeetingInfo createMeeting(String topic, LocalDateTime startTime, long durationMinutes) {
-        // Dans la réalité, appel à l'API Zoom avec OAuth2
         String meetingId = UUID.randomUUID().toString();
-        String joinUrl = "https://zoom.us/j/" + meetingId;  // simulé
+        // Stocké pour compatibilité; getJoinLink utilise l'ID consultation pour Jitsi
+        String joinUrl = "https://meet.jit.si/NeuroGuard-" + meetingId;
         return new MeetingInfo(meetingId, joinUrl);
     }
 

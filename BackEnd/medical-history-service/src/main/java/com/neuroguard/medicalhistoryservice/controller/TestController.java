@@ -48,7 +48,7 @@ public class TestController {
             response.put("authHeaderStartsWith Bearer", authHeader.startsWith("Bearer "));
         }
 
-        String userId = (String) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute("userId");
         String userRole = (String) request.getAttribute("userRole");
         response.put("userId", userId);
         response.put("userRole", userRole);

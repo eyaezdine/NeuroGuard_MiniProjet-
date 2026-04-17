@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "user-service", url = "${user-service.url:}", path = "/users")
+@FeignClient(name = "user-service", path = "/api/users")
 public interface UserServiceClient {
 
     @GetMapping("/username/{username}")
     UserDto getUserByUsername(@PathVariable("username") String username);
 
     @GetMapping("/{id}")
-    UserDto getUserById(@PathVariable("id") String id);
+    UserDto getUserById(@PathVariable("id") Long id);
 
     @GetMapping("/role/{role}")
     List<UserDto> getUsersByRole(@PathVariable("role") String role);

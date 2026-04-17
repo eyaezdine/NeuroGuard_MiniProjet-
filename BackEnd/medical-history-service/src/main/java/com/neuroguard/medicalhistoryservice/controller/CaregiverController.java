@@ -8,11 +8,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +23,14 @@ import java.util.List;
 public class CaregiverController {
 
     private static final Logger log = LoggerFactory.getLogger(CaregiverController.class);
+
     private final MedicalHistoryService historyService;
     private final UserServiceClient userServiceClient;
 
     @GetMapping("/{patientId}")
-    public ResponseEntity<MedicalHistoryResponse> getHistory(@PathVariable String patientId,
+    public ResponseEntity<MedicalHistoryResponse> getHistory(@PathVariable Long patientId,
                                                              HttpServletRequest httpRequest) {
-        String caregiverId = (String) httpRequest.getAttribute("userId");
+        Long caregiverId = (Long) httpRequest.getAttribute("userId");
         String role = (String) httpRequest.getAttribute("userRole");
         MedicalHistoryResponse response = historyService.getMedicalHistoryByPatientId(patientId, caregiverId, role);
         return ResponseEntity.ok(response);
@@ -37,11 +38,12 @@ public class CaregiverController {
 
     @GetMapping("/patients")
     public ResponseEntity<List<UserDto>> getAssignedPatients(HttpServletRequest httpRequest) {
-        String caregiverId = (String) httpRequest.getAttribute("userId");
-        List<MedicalHistoryResponse> histories = historyService.getAllMedicalHistoriesForCaregiver(caregiverId);
+        Long caregiverId = (Long) httpRequest.getAttribute("userId");
+        Page<MedicalHistoryResponse> histories = historyService.getAllMedicalHistoriesForCaregiver(caregiverId, Pageable.unpaged());
+        List<MedicalHistoryResponse> content = histories.getContent();
 
         List<UserDto> patients = new ArrayList<>();
-        for (MedicalHistoryResponse history : histories) {
+        for (MedicalHistoryResponse history : content) {
             try {
                 UserDto patient = userServiceClient.getUserById(history.getPatientId());
                 patients.add(patient);

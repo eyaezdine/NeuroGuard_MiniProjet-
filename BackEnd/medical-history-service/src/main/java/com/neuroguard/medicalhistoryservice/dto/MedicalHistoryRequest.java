@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class MedicalHistoryRequest {
-    private String patientId;          // required, now String
+    private Long patientId;
     private String diagnosis;
     private LocalDate diagnosisDate;
     private ProgressionStage progressionStage;
@@ -21,7 +21,26 @@ public class MedicalHistoryRequest {
     private String environmentalAllergies;
     private String foodAllergies;
     private List<Surgery> surgeries;
-    private List<String> providerIds;          // List<Long> → List<String>
-    private List<String> caregiverNames;       // caregivers by username (email)
-    private List<String> caregiverIds;         // caregivers by ID
+    private List<Long> providerIds;
+    private List<String> caregiverNames;
+    private List<Long> caregiverIds;
+
+    // ---------- NEW FIELDS ----------
+    private Integer mmse;
+    private Integer functionalAssessment;
+    private Integer adl;
+    private Boolean memoryComplaints;
+    private Boolean behavioralProblems;
+    private Boolean smoking;
+    private Boolean cardiovascularDisease;
+    private Boolean diabetes;
+    private Boolean depression;
+    private Boolean headInjury;
+    private Boolean hypertension;
+    private Integer alcoholConsumption;
+    private Integer physicalActivity;
+    private Integer dietQuality;
+    private Integer sleepQuality;
+    private Double bmi;
+    private Integer cholesterolTotal;
 }

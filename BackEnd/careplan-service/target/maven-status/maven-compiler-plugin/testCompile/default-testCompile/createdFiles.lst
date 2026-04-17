@@ -1,0 +1,5 @@
+com\esprit\microservice\careplanservice\services\CarePlanServiceTest.class
+com\esprit\microservice\careplanservice\services\PrescriptionServiceTest.class
+com\esprit\microservice\careplanservice\services\RiskAnalysisServiceTest.class
+com\esprit\microservice\careplanservice\CareplanServiceApplicationTests.class
+com\esprit\microservice\careplanservice\services\StatisticsServiceTest.class
