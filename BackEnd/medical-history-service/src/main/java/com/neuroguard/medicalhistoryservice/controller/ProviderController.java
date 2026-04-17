@@ -1,12 +1,14 @@
 package com.neuroguard.medicalhistoryservice.controller;
 
 import com.neuroguard.medicalhistoryservice.client.UserServiceClient;
-import com.neuroguard.medicalhistoryservice.dto.MedicalHistoryRequest;
-import com.neuroguard.medicalhistoryservice.dto.MedicalHistoryResponse;
-import com.neuroguard.medicalhistoryservice.dto.UserDto;
+import com.neuroguard.medicalhistoryservice.dto.*;
 import com.neuroguard.medicalhistoryservice.service.MedicalHistoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,39 +26,41 @@ public class ProviderController {
     @PostMapping
     public ResponseEntity<MedicalHistoryResponse> createHistory(@RequestBody MedicalHistoryRequest request,
                                                                 HttpServletRequest httpRequest) {
-        String providerId = (String) httpRequest.getAttribute("userId");
+        Long providerId = (Long) httpRequest.getAttribute("userId");
         MedicalHistoryResponse response = historyService.createMedicalHistory(request, providerId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/{patientId}")
-    public ResponseEntity<MedicalHistoryResponse> updateHistory(@PathVariable String patientId,
+    public ResponseEntity<MedicalHistoryResponse> updateHistory(@PathVariable Long patientId,
                                                                 @RequestBody MedicalHistoryRequest request,
                                                                 HttpServletRequest httpRequest) {
-        String providerId = (String) httpRequest.getAttribute("userId");
+        Long providerId = (Long) httpRequest.getAttribute("userId");
         MedicalHistoryResponse response = historyService.updateMedicalHistory(patientId, request, providerId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<MedicalHistoryResponse>> getAllHistories(HttpServletRequest httpRequest) {
-        String providerId = (String) httpRequest.getAttribute("userId");
-        List<MedicalHistoryResponse> histories = historyService.getAllMedicalHistoriesForProvider(providerId);
+    public ResponseEntity<Page<MedicalHistoryResponse>> getAllHistories(
+            @PageableDefault(size = 20) Pageable pageable,
+            HttpServletRequest httpRequest) {
+        Long providerId = (Long) httpRequest.getAttribute("userId");
+        Page<MedicalHistoryResponse> histories = historyService.getAllMedicalHistoriesForProvider(providerId, pageable);
         return ResponseEntity.ok(histories);
     }
 
     @DeleteMapping("/{patientId}")
-    public ResponseEntity<Void> deleteHistory(@PathVariable String patientId,
+    public ResponseEntity<Void> deleteHistory(@PathVariable Long patientId,
                                               HttpServletRequest httpRequest) {
-        String providerId = (String) httpRequest.getAttribute("userId");
+        Long providerId = (Long) httpRequest.getAttribute("userId");
         historyService.deleteMedicalHistory(patientId, providerId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{patientId}")
-    public ResponseEntity<MedicalHistoryResponse> getHistory(@PathVariable String patientId,
+    public ResponseEntity<MedicalHistoryResponse> getHistory(@PathVariable Long patientId,
                                                              HttpServletRequest httpRequest) {
-        String requesterId = (String) httpRequest.getAttribute("userId");
+        Long requesterId = (Long) httpRequest.getAttribute("userId");
         String role = (String) httpRequest.getAttribute("userRole");
         MedicalHistoryResponse response = historyService.getMedicalHistoryByPatientId(patientId, requesterId, role);
         return ResponseEntity.ok(response);
@@ -81,12 +85,19 @@ public class ProviderController {
     }
 
     @DeleteMapping("/{patientId}/files/{fileId}")
-    public ResponseEntity<Void> deleteFile(@PathVariable String patientId,
+    public ResponseEntity<Void> deleteFile(@PathVariable Long patientId,
                                            @PathVariable Long fileId,
                                            HttpServletRequest httpRequest) {
-        String providerId = (String) httpRequest.getAttribute("userId");
+        Long providerId = (Long) httpRequest.getAttribute("userId");
         String role = (String) httpRequest.getAttribute("userRole");
         historyService.deleteFile(patientId, fileId, providerId, role);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/features/{patientId}")
+    public ResponseEntity<PatientFeatures> getPatientFeatures(@PathVariable Long patientId,
+                                                              HttpServletRequest request) {
+        PatientFeatures features = historyService.buildPatientFeatures(patientId);
+        return ResponseEntity.ok(features);
     }
 }

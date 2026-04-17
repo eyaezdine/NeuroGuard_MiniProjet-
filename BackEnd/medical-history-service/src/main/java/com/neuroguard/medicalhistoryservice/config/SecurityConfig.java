@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -37,16 +38,19 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(authenticationEntryPoint())
-                        .accessDeniedHandler(accessDeniedHandler())
-                )
+                        .accessDeniedHandler(accessDeniedHandler()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("OPTIONS", "/**").permitAll()
+                        .requestMatchers("/files/**").permitAll()
+                    .requestMatchers("/api/internal/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/patient/medical-history/me/files").permitAll()
                         .requestMatchers("/api/patient/**").hasRole("PATIENT")
                         .requestMatchers("/api/provider/**").hasRole("PROVIDER")
                         .requestMatchers("/api/caregiver/**").hasRole("CAREGIVER")
-                        .anyRequest().authenticated()
-                );
+                        .requestMatchers("/api/statistics/**").authenticated()
+                        .anyRequest().authenticated());
         return http.build();
     }
 
@@ -54,7 +58,8 @@ public class SecurityConfig {
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return new AuthenticationEntryPoint() {
             @Override
-            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+            public void commence(HttpServletRequest request, HttpServletResponse response,
+                    AuthenticationException authException) throws IOException, ServletException {
                 log.error("Authentication failed: {}", authException.getMessage());
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -67,11 +72,15 @@ public class SecurityConfig {
     public AccessDeniedHandler accessDeniedHandler() {
         return new AccessDeniedHandler() {
             @Override
-            public void handle(HttpServletRequest request, HttpServletResponse response, org.springframework.security.access.AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                log.error("Access denied for request {} with authentication: {}", request.getRequestURI(), request.getUserPrincipal());
+            public void handle(HttpServletRequest request, HttpServletResponse response,
+                    org.springframework.security.access.AccessDeniedException accessDeniedException)
+                    throws IOException, ServletException {
+                log.error("Access denied for request {} with authentication: {}", request.getRequestURI(),
+                        request.getUserPrincipal());
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("{\"error\": \"Access Forbidden: " + accessDeniedException.getMessage() + "\"}");
+                response.getWriter()
+                        .write("{\"error\": \"Access Forbidden: " + accessDeniedException.getMessage() + "\"}");
             }
         };
     }

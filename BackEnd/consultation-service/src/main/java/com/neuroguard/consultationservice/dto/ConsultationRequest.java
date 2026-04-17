@@ -17,6 +17,11 @@ public class ConsultationRequest {
     @NotNull
     private Long patientId;
     private Long caregiverId;
+    /**
+     * ID du médecin/infirmier (provider). Obligatoire quand un CAREGIVER crée la consultation.
+     * Ignoré quand un PROVIDER crée (on utilise son propre ID).
+     */
+    private Long providerId;
 
     // Getters and setters
     public String getTitle() { return title; }
@@ -39,4 +44,7 @@ public class ConsultationRequest {
 
     public Long getCaregiverId() { return caregiverId; }
     public void setCaregiverId(Long caregiverId) { this.caregiverId = caregiverId; }
+
+    public Long getProviderId() { return providerId; }
+    public void setProviderId(Long providerId) { this.providerId = providerId; }
 }

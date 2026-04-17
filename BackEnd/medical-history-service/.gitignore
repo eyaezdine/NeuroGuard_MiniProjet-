@@ -18,6 +18,9 @@ target/
 *.iws
 *.iml
 *.ipr
+*.log
+*.jar
+
 
 ### NetBeans ###
 /nbproject/private/
@@ -31,3 +34,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Environment variables (contains sensitive data)
+.env
+.env.local
+.env.*.local

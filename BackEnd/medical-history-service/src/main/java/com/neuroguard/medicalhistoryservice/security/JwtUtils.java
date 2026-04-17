@@ -1,5 +1,6 @@
 package com.neuroguard.medicalhistoryservice.security;
 
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -19,43 +20,74 @@ public class JwtUtils {
 
     public DecodedJWT verifyToken(String token) {
         try {
-            return JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
+            log.debug("Attempting to verify JWT token. Secret length: {}", secret.length());
+            DecodedJWT decoded = JWT.require(Algorithm.HMAC256(secret))
+                    .build()
+                    .verify(token);
+            log.debug("JWT token verification successful");
+            return decoded;
         } catch (JWTVerificationException e) {
             log.error("JWT verification failed: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error during JWT verification: {}", e.getMessage(), e);
             throw e;
         }
     }
 
-    public String getUserIdFromToken(String token) {
+    public String getUsernameFromToken(String token) {
         try {
-            String userId = verifyToken(token).getClaim("id").asString();
-            if (userId == null) {
-                throw new RuntimeException("UserId claim missing in JWT token");
-            }
-            return userId;
+            String username = verifyToken(token).getSubject();
+            log.debug("Extracted username from token: {}", username);
+            return username;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to extract userId from token", e);
+            log.error("Failed to extract username from token: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to extract username from token", e);
         }
     }
 
     public String getRoleFromToken(String token) {
         try {
             String role = verifyToken(token).getClaim("role").asString();
-            if (role == null) {
+            if (role == null || role.isEmpty()) {
+                log.warn("Role claim is null or empty in JWT token");
                 throw new RuntimeException("Role claim missing in JWT token");
             }
+            log.debug("Extracted role from token: {}", role);
             return role;
         } catch (Exception e) {
+            log.error("Failed to extract role from token: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to extract role from token", e);
         }
     }
 
     public boolean validateToken(String token) {
         try {
+            log.debug("Starting JWT token validation");
             verifyToken(token);
+            log.debug("JWT token validation successful");
             return true;
         } catch (Exception e) {
+            log.warn("Token validation failed: {} - Message: {}", e.getClass().getSimpleName(), e.getMessage());
             return false;
+        }
+    }
+
+    public Long getUserIdFromToken(String token) {
+        try {
+            DecodedJWT decoded = verifyToken(token);
+            Long userId = decoded.getClaim("userId").isNull()
+                    ? decoded.getClaim("id").asLong()
+                    : decoded.getClaim("userId").asLong();
+            if (userId == null) {
+                log.warn("UserId/id claim is null in JWT token");
+                return null;
+            }
+            log.debug("Extracted userId from token: {}", userId);
+            return userId;
+        } catch (Exception e) {
+            log.warn("Failed to extract userId from token: {} - returning null", e.getMessage());
+            return null;
         }
     }
 }

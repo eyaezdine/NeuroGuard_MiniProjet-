@@ -1,0 +1,62 @@
+<div class="ms-page">
+  <div class="ms-header">
+    <div>
+      <h2>CarePlan</h2>
+      <p>Managed via <strong>careplan-service</strong> through Gateway <code>/api/care-plans/**</code></p>
+    </div>
+    <div class="ms-badge online"><span class="dot"></span> API Ready</div>
+  </div>
+
+  <div *ngIf="loading" class="ms-loading">Loading care plans...</div>
+  <div *ngIf="error" class="ms-error">{{ error }}</div>
+
+  <div class="ms-grid" *ngIf="!loading">
+    <app-resource-list
+      [title]="'CarePlan List'"
+      [items]="records"
+      [statusOptions]="['LOW', 'MEDIUM', 'HIGH', 'TODO', 'DONE']"
+      (itemSelected)="onSelect($event)"
+    ></app-resource-list>
+
+    <app-resource-view [title]="'CarePlan View'" [data]="selected"></app-resource-view>
+  </div>
+
+  <section class="ms-api-section ms-panel" style="margin-top: 1rem;">
+    <h3>CarePlan Create / Update Form</h3>
+    <p>
+      Clinical sync rule: priority is derived in real time from patient progression stage in
+      <strong>medical-history-service</strong>. Selected priority is used only as fallback when no history exists.
+    </p>
+
+    <form [formGroup]="carePlanForm" class="ms-form-grid" novalidate>
+      <select class="ms-select" formControlName="patientId">
+        <option value="">Select patient *</option>
+        <option *ngFor="let user of patients" [value]="user.id">{{ displayUser(user) }}</option>
+      </select>
+      <select class="ms-select" formControlName="providerId">
+        <option value="">Select provider (optional)</option>
+        <option *ngFor="let user of providers" [value]="user.id">{{ displayUser(user) }}</option>
+      </select>
+      <select class="ms-select" formControlName="priority">
+        <option value="LOW">LOW</option>
+        <option value="MEDIUM">MEDIUM</option>
+        <option value="HIGH">HIGH</option>
+      </select>
+      <textarea class="ms-input ms-textarea" formControlName="nutritionPlan" placeholder="Nutrition plan"></textarea>
+      <textarea class="ms-input ms-textarea" formControlName="sleepPlan" placeholder="Sleep plan"></textarea>
+      <textarea class="ms-input ms-textarea" formControlName="activityPlan" placeholder="Activity plan"></textarea>
+      <textarea class="ms-input ms-textarea" formControlName="medicationPlan" placeholder="Medication plan"></textarea>
+    </form>
+
+    <div class="ms-actions">
+      <button type="button" class="method post ms-post-btn" (click)="submitCreate()">Create</button>
+      <button type="button" class="method put ms-post-btn" (click)="submitUpdate()">Update</button>
+      <button type="button" class="method delete ms-post-btn" (click)="deleteSelected()">Delete</button>
+      <button type="button" class="method delete ms-post-btn" (click)="resetForm()">Reset</button>
+      <span *ngIf="editingId">Editing care plan #{{ editingId }}</span>
+    </div>
+
+    <div *ngIf="formError" class="ms-error">{{ formError }}</div>
+    <div *ngIf="formSuccess" class="ms-success">{{ formSuccess }}</div>
+  </section>
+</div>

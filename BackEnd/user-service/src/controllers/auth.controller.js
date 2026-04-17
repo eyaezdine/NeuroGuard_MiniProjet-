@@ -1,6 +1,17 @@
 const User = require('../models/User');
 const { generateToken } = require('../utils/token');
 
+const ensureNumericId = async (user) => {
+    if (Number.isInteger(user.numericId)) {
+        return user;
+    }
+
+    const lastUser = await User.findOne({}, { numericId: 1 }).sort({ numericId: -1 });
+    user.numericId = (lastUser?.numericId || 0) + 1;
+    await user.save({ validateBeforeSave: false });
+    return user;
+};
+
 const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password, role } = req.body;
@@ -21,7 +32,8 @@ const register = async (req, res) => {
             role,
         });
 
-        const token = generateToken(user._id, user.role, user.email);
+        await ensureNumericId(user);
+        const token = generateToken(user.numericId, user.role, user.email);
 
         res.status(201).json({
             success: true,
@@ -70,7 +82,8 @@ const login = async (req, res) => {
             });
         }
 
-        const token = generateToken(user._id, user.role, user.email);
+        await ensureNumericId(user);
+        const token = generateToken(user.numericId, user.role, user.email);
 
         res.status(200).json({
             success: true,

@@ -43,7 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         DecodedJWT decodedJWT = jwtUtils.verifyToken(token);
         String username = decodedJWT.getSubject();
         String role = decodedJWT.getClaim("role").asString();
-        Long userId = decodedJWT.getClaim("userId").asLong();
+        Long userId = decodedJWT.getClaim("userId").isNull()
+            ? decodedJWT.getClaim("id").asLong()
+            : decodedJWT.getClaim("userId").asLong();
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 username,

@@ -8,13 +8,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @FeignClient(name = "user-service",
-        url = "http://localhost:8081",
+
         configuration = FeignClientConfig.class)  // <-- ajout de la configuration
 public interface UserServiceClient {
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/api/users/{id}")
     UserDto getUserById(@PathVariable("id") Long id);
 
-    @GetMapping("/users/caregiver/{caregiverId}/patients")
+    @GetMapping("/api/users/caregiver/{caregiverId}/patients")
     List<UserDto> getPatientsByCaregiver(@PathVariable("caregiverId") Long caregiverId);
+
+    /**
+     * Récupère tous les utilisateurs d'un rôle donné (ex: PROVIDER).
+     * Inclut leurs coordonnées lat/lon pour le calcul de proximité.
+     */
+    @GetMapping("/api/users/role/{role}")
+    List<UserDto> getUsersByRole(@PathVariable("role") String role);
 }
