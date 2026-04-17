@@ -1,0 +1,65 @@
+<div class="ms-page">
+  <div class="ms-header">
+    <div>
+      <h2>Consultation</h2>
+      <p>Managed via <strong>consultation-service</strong> through Gateway <code>/api/consultations/**</code></p>
+    </div>
+    <div class="ms-badge online"><span class="dot"></span> API Ready</div>
+  </div>
+
+  <div *ngIf="loading" class="ms-loading">Loading consultations...</div>
+  <div *ngIf="error" class="ms-error">{{ error }}</div>
+
+  <div class="ms-grid" *ngIf="!loading">
+    <app-resource-list
+      [title]="'Consultation List'"
+      [items]="records"
+      [statusOptions]="['SCHEDULED', 'COMPLETED', 'CANCELLED']"
+      (itemSelected)="onSelect($event)"
+    ></app-resource-list>
+
+    <app-resource-view [title]="'Consultation View'" [data]="selected"></app-resource-view>
+  </div>
+
+  <section class="ms-api-section ms-panel" style="margin-top: 1rem;">
+    <h3>Consultation Create / Update Form</h3>
+    <p>
+      Clinical sync rule: for <strong>ONLINE</strong> consultations, backend now validates patient clinical context from
+      <strong>medical-history-service</strong> before confirmation.
+    </p>
+
+    <form [formGroup]="consultationForm" class="ms-form-grid" novalidate>
+      <input class="ms-input" type="text" formControlName="title" placeholder="Title *" />
+      <select class="ms-select" formControlName="type">
+        <option value="ONLINE">ONLINE</option>
+        <option value="PRESENTIAL">PRESENTIAL</option>
+      </select>
+      <input class="ms-input" type="datetime-local" formControlName="startTime" />
+      <input class="ms-input" type="datetime-local" formControlName="endTime" />
+      <select class="ms-select" formControlName="patientId">
+        <option value="">Select patient *</option>
+        <option *ngFor="let user of patients" [value]="user.id">{{ displayUser(user) }}</option>
+      </select>
+      <select class="ms-select" formControlName="caregiverId">
+        <option value="">Select caregiver (optional)</option>
+        <option *ngFor="let user of caregivers" [value]="user.id">{{ displayUser(user) }}</option>
+      </select>
+      <select class="ms-select" formControlName="providerId">
+        <option value="">Select provider (optional)</option>
+        <option *ngFor="let user of providers" [value]="user.id">{{ displayUser(user) }}</option>
+      </select>
+      <textarea class="ms-input ms-textarea" formControlName="description" placeholder="Description"></textarea>
+    </form>
+
+    <div class="ms-actions">
+      <button type="button" class="method post ms-post-btn" (click)="submitCreate()">Create</button>
+      <button type="button" class="method put ms-post-btn" (click)="submitUpdate()">Update</button>
+      <button type="button" class="method delete ms-post-btn" (click)="deleteSelected()">Delete</button>
+      <button type="button" class="method delete ms-post-btn" (click)="resetForm()">Reset</button>
+      <span *ngIf="editingId">Editing consultation #{{ editingId }}</span>
+    </div>
+
+    <div *ngIf="formError" class="ms-error">{{ formError }}</div>
+    <div *ngIf="formSuccess" class="ms-success">{{ formSuccess }}</div>
+  </section>
+</div>

@@ -1,0 +1,40 @@
+<section class="ms-api-section">
+  <h3>{{ title }}</h3>
+
+  <div class="ms-filters">
+    <input
+      type="text"
+      [(ngModel)]="query.search"
+      (input)="apply()"
+      placeholder="Search..."
+      class="ms-input"
+    />
+
+    <select [(ngModel)]="query.status" (change)="apply()" class="ms-select">
+      <option value="ALL">All statuses</option>
+      <option *ngFor="let option of statusOptions" [value]="option">{{ option }}</option>
+    </select>
+
+    <select [(ngModel)]="query.sortBy" (change)="apply()" class="ms-select">
+      <option value="updatedAt">Sort by date</option>
+      <option value="title">Sort by title</option>
+      <option value="status">Sort by status</option>
+    </select>
+
+    <select [(ngModel)]="query.direction" (change)="apply()" class="ms-select">
+      <option value="desc">Descending</option>
+      <option value="asc">Ascending</option>
+    </select>
+  </div>
+
+  <div class="endpoint-list">
+    <button type="button" class="endpoint endpoint-btn" *ngFor="let item of filtered" (click)="select(item)">
+      <span class="method get">#{{ item.id }}</span>
+      <div class="endpoint-body">
+        <strong>{{ item.title }}</strong>
+        <span>{{ item.subtitle }}</span>
+      </div>
+      <span class="method post" *ngIf="item.status">{{ item.status }}</span>
+    </button>
+  </div>
+</section>

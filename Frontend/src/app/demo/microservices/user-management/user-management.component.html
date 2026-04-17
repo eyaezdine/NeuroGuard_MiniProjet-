@@ -1,0 +1,43 @@
+<div class="ms-page">
+  <div class="ms-header">
+    <span class="ms-icon" nz-icon nzType="user" nzTheme="outline"></span>
+    <div>
+      <h2>User Management</h2>
+      <p>Managed via <strong>user-service</strong> (Node.js · Port 8081) → Gateway <code>/api/users/**</code></p>
+    </div>
+    <div class="ms-badge online">
+      <span class="dot"></span> Port 8081
+    </div>
+  </div>
+
+  <div class="ms-cards">
+    <div class="ms-card">
+      <div class="card-icon" style="background: #e8f4fd;"><i class="icon user-icon">👤</i></div>
+      <h4>Register User</h4>
+      <p>Create a new user account via <code>POST /api/auth/register</code></p>
+    </div>
+    <div class="ms-card">
+      <div class="card-icon" style="background: #e8fdf0;"><i class="icon">🔑</i></div>
+      <h4>Login</h4>
+      <p>Authenticate and receive a JWT token via <code>POST /api/auth/login</code></p>
+    </div>
+    <div class="ms-card">
+      <div class="card-icon" style="background: #fdf8e8;"><i class="icon">📋</i></div>
+      <h4>List Users</h4>
+      <p>Fetch all registered users via <code>GET /api/users</code></p>
+    </div>
+  </div>
+
+  <div class="ms-api-section">
+    <h3>API Endpoints (via Gateway → localhost:8083)</h3>
+    <div class="endpoint-list">
+      <div class="endpoint"><span class="method post">POST</span><code>/api/auth/register</code></div>
+      <div class="endpoint"><span class="method post">POST</span><code>/api/auth/login</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/api/users</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/api/users/:id</code></div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="ms-loading">Loading...</div>
+  <div *ngIf="error" class="ms-error">{{ error }}</div>
+</div>

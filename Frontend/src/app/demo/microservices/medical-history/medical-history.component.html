@@ -1,0 +1,62 @@
+<div class="ms-page">
+  <div class="ms-header">
+    <div>
+      <h2>Medical History</h2>
+      <p>Managed via <strong>medical-history-service</strong> through Gateway <code>/api/*/medical-history/**</code></p>
+    </div>
+    <div class="ms-badge online"><span class="dot"></span> API Ready</div>
+  </div>
+
+  <div *ngIf="loading" class="ms-loading">Loading medical history...</div>
+  <div *ngIf="error" class="ms-error">{{ error }}</div>
+
+  <div class="ms-grid" *ngIf="!loading">
+    <app-resource-list
+      [title]="'Medical History List'"
+      [items]="records"
+      [statusOptions]="['EARLY', 'MILD', 'MODERATE', 'SEVERE', 'N/A']"
+      (itemSelected)="onSelect($event)"
+    ></app-resource-list>
+
+    <app-resource-view [title]="'Medical History View'" [data]="selected"></app-resource-view>
+  </div>
+
+  <section class="ms-api-section ms-panel" style="margin-top: 1rem;">
+    <h3>Medical History Create / Update Form</h3>
+
+    <form [formGroup]="historyForm" class="ms-form-grid" novalidate>
+      <select class="ms-select" formControlName="patientId">
+        <option value="">Select patient *</option>
+        <option *ngFor="let user of patients" [value]="user.id">{{ displayUser(user) }}</option>
+      </select>
+      <select class="ms-select" formControlName="providerIds" multiple>
+        <option *ngFor="let user of providers" [value]="user.id">{{ displayUser(user) }}</option>
+      </select>
+      <input class="ms-input" type="text" formControlName="diagnosis" placeholder="Diagnosis" />
+      <input class="ms-input" type="date" formControlName="diagnosisDate" />
+      <select class="ms-select" formControlName="progressionStage">
+        <option value="MILD">MILD</option>
+        <option value="MODERATE">MODERATE</option>
+        <option value="SEVERE">SEVERE</option>
+      </select>
+      <input class="ms-input" type="text" formControlName="geneticRisk" placeholder="Genetic risk" />
+      <input class="ms-input" type="text" formControlName="familyHistory" placeholder="Family history" />
+      <input class="ms-input" type="text" formControlName="environmentalFactors" placeholder="Environmental factors" />
+      <input class="ms-input" type="text" formControlName="comorbidities" placeholder="Comorbidities" />
+      <input class="ms-input" type="text" formControlName="medicationAllergies" placeholder="Medication allergies" />
+      <input class="ms-input" type="text" formControlName="environmentalAllergies" placeholder="Environmental allergies" />
+      <input class="ms-input" type="text" formControlName="foodAllergies" placeholder="Food allergies" />
+    </form>
+
+    <div class="ms-actions">
+      <button type="button" class="method post ms-post-btn" (click)="submitCreate()">Create</button>
+      <button type="button" class="method put ms-post-btn" (click)="submitUpdate()">Update</button>
+      <button type="button" class="method delete ms-post-btn" (click)="deleteSelected()">Delete</button>
+      <button type="button" class="method delete ms-post-btn" (click)="resetForm()">Reset</button>
+      <span *ngIf="editingPatientId">Editing patient #{{ editingPatientId }}</span>
+    </div>
+
+    <div *ngIf="formError" class="ms-error">{{ formError }}</div>
+    <div *ngIf="formSuccess" class="ms-success">{{ formSuccess }}</div>
+  </section>
+</div>

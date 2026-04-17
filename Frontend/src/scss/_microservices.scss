@@ -1,0 +1,384 @@
+/* ============================================
+   NeuroGuard — Microservice Page Shared Styles
+   ============================================ */
+
+/* Page layout */
+.ms-page {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(17, 94, 89, 0.08), transparent 38%),
+    radial-gradient(circle at 96% 100%, rgba(249, 115, 22, 0.08), transparent 40%);
+}
+
+/* Page header */
+.ms-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(130deg, #0f766e 0%, #0f3b56 52%, #ea580c 100%);
+  border-radius: 16px;
+  color: #fff;
+  box-shadow: 0 18px 45px rgba(15, 59, 86, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.ms-header::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+.ms-header h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  color: #fff;
+}
+
+.ms-header p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.ms-header p code {
+  background: rgba(255,255,255,0.12);
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 0.82rem;
+  color: #a8d8f8;
+}
+
+/* Status badge */
+.ms-badge {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ms-badge.online  { background: rgba(39, 174, 96, 0.2); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.4); }
+.ms-badge.offline { background: rgba(231, 76, 60, 0.2);  color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.4); }
+
+.ms-badge .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+.ms-badge.online  .dot { background: #2ecc71; }
+.ms-badge.offline .dot { background: #e74c3c; animation: none; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.3); }
+}
+
+/* Cards grid */
+.ms-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.ms-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  border: 1px solid #f0f0f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ms-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.ms-card .card-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.ms-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1f36;
+}
+
+.ms-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.ms-card p code {
+  background: #f5f5f5;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  color: #2d3561;
+}
+
+/* API Endpoints section */
+.ms-api-section {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 1.5rem 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.ms-panel {
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+}
+
+.ms-api-section h3 {
+  margin: 0 0 1.25rem;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.endpoint-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.endpoint {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e8eaf0;
+  font-size: 0.88rem;
+}
+
+.endpoint code {
+  color: #374151;
+  font-size: 0.85rem;
+}
+
+/* HTTP method badges */
+.method {
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  min-width: 60px;
+  text-align: center;
+}
+.method.get    { background: #dbeafe; color: #1d4ed8; }
+.method.post   { background: #dcfce7; color: #16a34a; }
+.method.put    { background: #fef9c3; color: #ca8a04; }
+.method.delete { background: #fee2e2; color: #dc2626; }
+
+/* Placeholder */
+.ms-placeholder {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: #f8f9fc;
+  border-radius: 14px;
+  border: 2px dashed #d1d5db;
+  margin-bottom: 2rem;
+}
+
+.placeholder-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+.ms-placeholder h3 { color: #374151; margin-bottom: 0.5rem; }
+.ms-placeholder p  { color: #6b7280; max-width: 480px; margin: 0 auto; }
+
+/* Loading / error */
+.ms-loading { text-align: center; padding: 2rem; color: #6b7280; }
+.ms-error   {
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  margin-top: 1rem;
+  border: 1px solid #fca5a5;
+}
+
+.ms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.ms-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.ms-input,
+.ms-select {
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.86rem;
+  color: #0f172a;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ms-input:focus,
+.ms-select:focus {
+  outline: none;
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+
+.ms-input {
+  min-width: 180px;
+  flex: 1;
+}
+
+.endpoint-btn {
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  cursor: pointer;
+}
+
+.endpoint-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.endpoint-body span {
+  color: #6b7280;
+}
+
+.ms-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ms-detail-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 1rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid #edf0f5;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.ms-detail-key {
+  text-transform: capitalize;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.ms-detail-value {
+  color: #111827;
+  overflow-wrap: anywhere;
+}
+
+.ms-forum-form {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.ms-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.ms-post-btn {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 0.5rem 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ms-post-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.ms-post-btn.method.post {
+  background: linear-gradient(120deg, #0f766e, #0d9488);
+  color: #fff;
+}
+
+.ms-post-btn.method.put {
+  background: linear-gradient(120deg, #ea580c, #f97316);
+  color: #fff;
+}
+
+.ms-post-btn.method.delete {
+  background: #fff;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.ms-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.6rem;
+}
+
+.ms-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed #cbd5e1;
+}
+
+.ms-success {
+  margin-top: 0.7rem;
+  border: 1px solid #86efac;
+  background: #ecfdf3;
+  color: #166534;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+}
+
+@media (max-width: 768px) {
+  .ms-page {
+    padding: 1rem;
+  }
+
+  .ms-header {
+    padding: 1.1rem 1.2rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ms-badge {
+    margin-left: 0;
+  }
+}
