@@ -22,6 +22,7 @@ export class AuthRegisterComponent {
   role = 'PATIENT'; // Default role
   loading = false;
   error = '';
+  validationErrors: { field: string; message: string }[] = [];
 
   roles = ['PATIENT', 'CAREGIVER', 'PROVIDER'];
 
@@ -33,6 +34,7 @@ export class AuthRegisterComponent {
   onSubmit() {
     this.loading = true;
     this.error = '';
+    this.validationErrors = [];
 
     const userData = {
       firstName: this.firstName,
@@ -47,7 +49,14 @@ export class AuthRegisterComponent {
         this.router.navigate(['/dashboard/default']);
       },
       error: (err) => {
+        console.error('Registration failed:', err);
         this.error = err.error?.message || 'Registration failed. Please try again.';
+        
+        // Extract validation errors if present
+        if (err.error?.errors && Array.isArray(err.error.errors)) {
+          this.validationErrors = err.error.errors;
+        }
+        
         this.loading = false;
       }
     });

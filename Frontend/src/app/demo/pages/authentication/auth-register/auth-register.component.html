@@ -13,7 +13,10 @@
 
           <!-- Error Alert -->
           <div *ngIf="error" class="alert alert-danger" role="alert">
-            {{ error }}
+            <p class="mb-0">{{ error }}</p>
+            <ul *ngIf="validationErrors.length > 0" class="mt-2 mb-0 ps-3">
+              <li *ngFor="let err of validationErrors">{{ err.message }}</li>
+            </ul>
           </div>
 
           <form (ngSubmit)="onSubmit()">
