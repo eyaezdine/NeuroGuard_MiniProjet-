@@ -42,7 +42,7 @@ public class PostService {
     private final PostImageService postImageService;
 
     @Transactional
-    public PostResponse createPost(PostRequest request, Long authorId) {
+    public PostResponse createPost(PostRequest request, String authorId) {
         profanityFilterService.validate(request.getTitle());
         profanityFilterService.validate(request.getContent());
         Post post = new Post();
@@ -59,7 +59,7 @@ public class PostService {
         return mapToResponse(saved, authorId);
     }
 
-    public List<PostResponse> getAllPosts(Long currentUserId) {
+    public List<PostResponse> getAllPosts(String currentUserId) {
         return postRepository.findAllByOrderByPinnedDescCreatedAtDesc().stream()
                 .map(post -> mapToResponse(post, currentUserId))
                 .collect(Collectors.toList());
@@ -72,7 +72,7 @@ public class PostService {
      * @param sort one of: newest, oldest, mostLiked, mostComments
      * @param categoryId optional; filter by category
      */
-    public PagedResponse<PostResponse> getPostsPaged(int page, int size, String sort, Long currentUserId, Long categoryId) {
+    public PagedResponse<PostResponse> getPostsPaged(int page, int size, String sort, String currentUserId, Long categoryId) {
         if (size < 1) size = 10;
         if (size > 50) size = 50;
         Pageable pageable = PageRequest.of(page, size);
@@ -123,14 +123,14 @@ public class PostService {
         );
     }
 
-    public PostResponse getPostById(Long id, Long currentUserId) {
+    public PostResponse getPostById(Long id, String currentUserId) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
         return mapToResponse(post, currentUserId);
     }
 
     @Transactional
-    public PostResponse updatePost(Long id, PostRequest request, Long currentUserId, String currentUserRole) {
+    public PostResponse updatePost(Long id, PostRequest request, String currentUserId, String currentUserRole) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
@@ -155,7 +155,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(Long id, Long currentUserId, String currentUserRole) {
+    public void deletePost(Long id, String currentUserId, String currentUserRole) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
@@ -166,7 +166,7 @@ public class PostService {
     }
 
     @Transactional
-    public void likePost(Long postId, Long userId) {
+    public void likePost(Long postId, String userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
         if (postLikeRepository.existsByPostIdAndUserId(postId, userId)) {
@@ -179,7 +179,7 @@ public class PostService {
     }
 
     @Transactional
-    public void unlikePost(Long postId, Long userId) {
+    public void unlikePost(Long postId, String userId) {
         if (!postLikeRepository.existsByPostIdAndUserId(postId, userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You have not liked this post");
         }
@@ -187,7 +187,7 @@ public class PostService {
     }
 
     @Transactional
-    public void sharePost(Long postId, Long userId) {
+    public void sharePost(Long postId, String userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
         if (postShareRepository.existsByPostIdAndUserId(postId, userId)) {
@@ -210,7 +210,7 @@ public class PostService {
         return mapToResponse(postRepository.save(post), null);
     }
 
-    private PostResponse mapToResponse(Post post, Long currentUserId) {
+    private PostResponse mapToResponse(Post post, String currentUserId) {
         PostResponse response = new PostResponse();
         response.setId(post.getId());
         response.setTitle(post.getTitle());
@@ -248,7 +248,7 @@ public class PostService {
         return response;
     }
 
-    public PagedResponse<PostResponse> search(String q, int page, int size, Long currentUserId) {
+    public PagedResponse<PostResponse> search(String q, int page, int size, String currentUserId) {
         if (size < 1) size = 10;
         if (size > 50) size = 50;
         if (q == null || q.isBlank()) {

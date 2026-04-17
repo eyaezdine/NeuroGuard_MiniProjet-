@@ -97,8 +97,13 @@ export class ForumComponent implements OnInit, OnDestroy {
         });
         this.filter(); this.loading = false; this.cdr.markForCheck();
       },
-      error: () => {
-        this.error = 'Cannot reach forum-service. Backend might be offline.';
+      error: (err) => {
+        console.error("Get Posts Error:", err);
+        if (err.status === 403) {
+          this.error = 'Access Denied (403 Forbidden). Token expired or missing roles.';
+        } else {
+          this.error = 'Cannot reach forum-service. Backend might be offline or unreachable.';
+        }
         this.loading = false; this.cdr.markForCheck();
       }
     });
@@ -167,7 +172,19 @@ export class ForumComponent implements OnInit, OnDestroy {
         this.filter();
         this.notify('Post published! 🎉');
       },
-      error: () => { this.submitting = false; this.notify('Failed to publish – backend offline?', 'error'); }
+      error: (err) => {
+        console.error("Create Post Error:", err);
+        this.submitting = false;
+        if (err.status === 403) {
+           this.notify('Access Denied. Please log in first.', 'error');
+        } else if (err.status === 400) {
+           this.notify('Invalid post payload. Please check title/content and retry.', 'error');
+        } else if (err.status === 401) {
+           this.notify('Session invalid. Please log in again.', 'error');
+        } else {
+           this.notify('Failed to publish \u2013 backend offline or error.', 'error');
+        }
+      }
     });
   }
 

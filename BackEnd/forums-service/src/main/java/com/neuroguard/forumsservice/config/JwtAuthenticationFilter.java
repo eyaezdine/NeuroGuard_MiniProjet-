@@ -41,9 +41,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         DecodedJWT decodedJWT = jwtUtils.verifyToken(token);
-        String username = decodedJWT.getSubject();
-        String role = decodedJWT.getClaim("role").asString();
-        Long userId = decodedJWT.getClaim("userId").asLong();
+        
+        String userId = null;
+        if (decodedJWT.getClaim("id") != null && !decodedJWT.getClaim("id").isNull()) {
+            userId = decodedJWT.getClaim("id").asString();
+        } else if (decodedJWT.getClaim("userId") != null && !decodedJWT.getClaim("userId").isNull()) {
+            userId = decodedJWT.getClaim("userId").asString();
+        }
+
+        String username = null;
+        if (decodedJWT.getClaim("email") != null && !decodedJWT.getClaim("email").isNull()) {
+            username = decodedJWT.getClaim("email").asString();
+        } else {
+            username = decodedJWT.getSubject();
+        }
+
+        String role = decodedJWT.getClaim("role") != null && !decodedJWT.getClaim("role").isNull()
+                      ? decodedJWT.getClaim("role").asString()
+                      : "USER";
+
+        if (username == null) {
+            username = "unknown";
+        }
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 username,

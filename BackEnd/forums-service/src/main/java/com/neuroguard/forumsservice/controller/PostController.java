@@ -16,19 +16,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api/forum/posts")
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
     private final PostImageService postImageService;
 
-    private Long getCurrentUserId(HttpServletRequest request) {
-        return (Long) request.getAttribute("userId");
+    private String getCurrentUserId(HttpServletRequest request) {
+        return (String) request.getAttribute("userId");
     }
 
     private String getCurrentUserRole(HttpServletRequest request) {
@@ -37,7 +38,7 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostResponse>> getAllPosts(HttpServletRequest request) {
-        Long currentUserId = getCurrentUserId(request);
+        String currentUserId = getCurrentUserId(request);
         return ResponseEntity.ok(postService.getAllPosts(currentUserId));
     }
 
@@ -48,7 +49,7 @@ public class PostController {
             @RequestParam(defaultValue = "newest") String sort,
             @RequestParam(required = false) Long categoryId,
             HttpServletRequest request) {
-        Long currentUserId = getCurrentUserId(request);
+        String currentUserId = getCurrentUserId(request);
         return ResponseEntity.ok(postService.getPostsPaged(page, size, sort, currentUserId, categoryId));
     }
 
@@ -58,13 +59,13 @@ public class PostController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
-        Long currentUserId = getCurrentUserId(request);
+        String currentUserId = getCurrentUserId(request);
         return ResponseEntity.ok(postService.search(q, page, size, currentUserId));
     }
 
     @GetMapping("/{id:\\d+}")
     public ResponseEntity<PostResponse> getPostById(@PathVariable Long id, HttpServletRequest request) {
-        Long currentUserId = getCurrentUserId(request);
+        String currentUserId = getCurrentUserId(request);
         return ResponseEntity.ok(postService.getPostById(id, currentUserId));
     }
 
@@ -73,7 +74,10 @@ public class PostController {
     public ResponseEntity<PostResponse> createPost(
             @Valid @RequestBody PostRequest request,
             HttpServletRequest httpRequest) {
-        Long userId = getCurrentUserId(httpRequest);
+        String userId = getCurrentUserId(httpRequest);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         PostResponse created = postService.createPost(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -84,7 +88,10 @@ public class PostController {
             @PathVariable Long id,
             @Valid @RequestBody PostRequest request,
             HttpServletRequest httpRequest) {
-        Long userId = getCurrentUserId(httpRequest);
+        String userId = getCurrentUserId(httpRequest);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         String role = getCurrentUserRole(httpRequest);
         return ResponseEntity.ok(postService.updatePost(id, request, userId, role));
     }
@@ -94,7 +101,10 @@ public class PostController {
     public ResponseEntity<Void> deletePost(
             @PathVariable Long id,
             HttpServletRequest httpRequest) {
-        Long userId = getCurrentUserId(httpRequest);
+        String userId = getCurrentUserId(httpRequest);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         String role = getCurrentUserRole(httpRequest);
         postService.deletePost(id, userId, role);
         return ResponseEntity.noContent().build();
@@ -104,7 +114,10 @@ public class PostController {
     @PostMapping("/{id:\\d+}/like")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> likePost(@PathVariable Long id, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
+        String userId = getCurrentUserId(request);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         postService.likePost(id, userId);
         return ResponseEntity.ok().build();
     }
@@ -112,7 +125,10 @@ public class PostController {
     @DeleteMapping("/{id:\\d+}/like")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> unlikePost(@PathVariable Long id, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
+        String userId = getCurrentUserId(request);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         postService.unlikePost(id, userId);
         return ResponseEntity.noContent().build();
     }
@@ -120,7 +136,10 @@ public class PostController {
     @PostMapping("/{id:\\d+}/share")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> sharePost(@PathVariable Long id, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
+        String userId = getCurrentUserId(request);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         postService.sharePost(id, userId);
         return ResponseEntity.ok().build();
     }
@@ -142,7 +161,10 @@ public class PostController {
             @PathVariable Long id,
             @RequestParam("files") MultipartFile[] files,
             HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
+        String userId = getCurrentUserId(request);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         List<String> urls = postImageService.addImages(id, files, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(urls);
     }
@@ -180,7 +202,10 @@ public class PostController {
             @PathVariable Long id,
             @PathVariable Long imageId,
             HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
+        String userId = getCurrentUserId(request);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         postImageService.deleteImage(id, imageId, userId);
         return ResponseEntity.noContent().build();
     }

@@ -25,7 +25,7 @@ public class Post {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
     @Column(nullable = false)
-    private Long authorId;
+    private String authorId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

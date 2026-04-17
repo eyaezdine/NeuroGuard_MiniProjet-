@@ -10,7 +10,7 @@ public class CommentResponse {
     private Long id;
     private String content;
     private Long postId;
-    private Long authorId;
+    private String authorId;
     private String authorUsername;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;       // set when edited

@@ -34,7 +34,7 @@ public class PostImageService {
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
     @Transactional
-    public List<String> addImages(Long postId, MultipartFile[] files, Long currentUserId) {
+    public List<String> addImages(Long postId, MultipartFile[] files, String currentUserId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         if (!post.getAuthorId().equals(currentUserId)) {
@@ -104,7 +104,7 @@ public class PostImageService {
     }
 
     @Transactional
-    public void deleteImage(Long postId, Long imageId, Long currentUserId) {
+    public void deleteImage(Long postId, Long imageId, String currentUserId) {
         PostImage img = postImageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("Image not found"));
         if (!img.getPost().getId().equals(postId)) {

@@ -31,7 +31,7 @@ public class CommentService {
     private final ProfanityFilterService profanityFilterService;
 
     @Transactional
-    public CommentResponse addComment(Long postId, CommentRequest request, Long authorId) {
+    public CommentResponse addComment(Long postId, CommentRequest request, String authorId) {
         profanityFilterService.validate(request.getContent());
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
@@ -46,7 +46,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse addReply(Long postId, Long parentCommentId, ReplyRequest request, Long authorId) {
+    public CommentResponse addReply(Long postId, Long parentCommentId, ReplyRequest request, String authorId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
         Comment parent = commentRepository.findById(parentCommentId)
@@ -65,7 +65,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse updateComment(Long commentId, CommentRequest request, Long currentUserId, String currentUserRole) {
+    public CommentResponse updateComment(Long commentId, CommentRequest request, String currentUserId, String currentUserRole) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
@@ -79,7 +79,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, Long currentUserId, String currentUserRole) {
+    public void deleteComment(Long commentId, String currentUserId, String currentUserRole) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
@@ -89,7 +89,7 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-    public List<CommentResponse> getCommentsByPost(Long postId, Long currentUserId) {
+    public List<CommentResponse> getCommentsByPost(Long postId, String currentUserId) {
         return commentRepository.findByPostIdOrderByCreatedAtAsc(postId).stream()
                 .map(comment -> mapToResponse(comment, currentUserId))
                 .collect(Collectors.toList());
@@ -105,7 +105,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void likeComment(Long commentId, Long userId) {
+    public void likeComment(Long commentId, String userId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
         if (commentLikeRepository.existsByCommentIdAndUserId(commentId, userId)) {
@@ -118,14 +118,14 @@ public class CommentService {
     }
 
     @Transactional
-    public void unlikeComment(Long commentId, Long userId) {
+    public void unlikeComment(Long commentId, String userId) {
         if (!commentLikeRepository.existsByCommentIdAndUserId(commentId, userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You have not liked this comment");
         }
         commentLikeRepository.deleteByCommentIdAndUserId(commentId, userId);
     }
 
-    private CommentResponse mapToResponse(Comment comment, Long currentUserId) {
+    private CommentResponse mapToResponse(Comment comment, String currentUserId) {
         CommentResponse response = new CommentResponse();
         response.setId(comment.getId());
         response.setContent(comment.getContent());

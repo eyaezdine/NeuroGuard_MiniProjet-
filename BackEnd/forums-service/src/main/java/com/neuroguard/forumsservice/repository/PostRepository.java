@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findByAuthorId(Long authorId);
+    List<Post> findByAuthorId(String authorId);
 
     List<Post> findAllByOrderByCreatedAtDesc();
 

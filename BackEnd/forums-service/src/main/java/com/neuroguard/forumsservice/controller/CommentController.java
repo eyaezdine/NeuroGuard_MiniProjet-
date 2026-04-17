@@ -11,18 +11,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/posts/{postId}/comments")
+@RequestMapping("/api/forum/posts/{postId}/comments")
 @RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
 
-    private Long getCurrentUserId(HttpServletRequest request) {
-        return (Long) request.getAttribute("userId");
+    private String getCurrentUserId(HttpServletRequest request) {
+        return (String) request.getAttribute("userId");
     }
 
     private String getCurrentUserRole(HttpServletRequest request) {
@@ -34,7 +35,7 @@ public class CommentController {
     public ResponseEntity<List<CommentResponse>> getCommentsByPost(
             @PathVariable Long postId,
             HttpServletRequest request) {
-        Long currentUserId = getCurrentUserId(request); // may be null
+        String currentUserId = getCurrentUserId(request); // may be null
         return ResponseEntity.ok(commentService.getCommentsByPost(postId, currentUserId));
     }
 
@@ -45,7 +46,10 @@ public class CommentController {
             @PathVariable Long postId,
             @Valid @RequestBody CommentRequest request,
             HttpServletRequest httpRequest) {
-        Long userId = getCurrentUserId(httpRequest);
+        String userId = getCurrentUserId(httpRequest);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         CommentResponse created = commentService.addComment(postId, request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -58,7 +62,10 @@ public class CommentController {
             @PathVariable Long commentId,
             @Valid @RequestBody CommentRequest request,
             HttpServletRequest httpRequest) {
-        Long userId = getCurrentUserId(httpRequest);
+        String userId = getCurrentUserId(httpRequest);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         String role = getCurrentUserRole(httpRequest);
         CommentResponse updated = commentService.updateComment(commentId, request, userId, role);
         return ResponseEntity.ok(updated);
@@ -70,7 +77,10 @@ public class CommentController {
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId,
             HttpServletRequest httpRequest) {
-        Long userId = getCurrentUserId(httpRequest);
+        String userId = getCurrentUserId(httpRequest);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         String role = getCurrentUserRole(httpRequest);
         commentService.deleteComment(commentId, userId, role);
         return ResponseEntity.noContent().build();
@@ -81,7 +91,10 @@ public class CommentController {
     @PostMapping("/{commentId}/like")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> likeComment(@PathVariable Long commentId, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
+        String userId = getCurrentUserId(request);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         commentService.likeComment(commentId, userId);
         return ResponseEntity.ok().build();
     }
@@ -89,7 +102,10 @@ public class CommentController {
     @DeleteMapping("/{commentId}/like")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> unlikeComment(@PathVariable Long commentId, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
+        String userId = getCurrentUserId(request);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         commentService.unlikeComment(commentId, userId);
         return ResponseEntity.noContent().build();
     }
@@ -101,7 +117,10 @@ public class CommentController {
             @PathVariable Long commentId,
             @Valid @RequestBody ReplyRequest request,
             HttpServletRequest httpRequest) {
-        Long userId = getCurrentUserId(httpRequest);
+        String userId = getCurrentUserId(httpRequest);
+        if (userId == null || userId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token: missing user id");
+        }
         CommentResponse reply = commentService.addReply(postId, commentId, request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(reply);
     }

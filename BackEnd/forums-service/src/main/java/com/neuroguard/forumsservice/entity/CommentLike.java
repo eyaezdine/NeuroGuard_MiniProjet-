@@ -21,7 +21,7 @@ public class CommentLike {
     @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private String userId;
     @CreationTimestamp
     private LocalDateTime createdAt;
 }

@@ -11,7 +11,7 @@ public class UserServiceClientFallbackFactory implements FallbackFactory<UserSer
     public UserServiceClient create(Throwable cause) {
         return new UserServiceClient() {
             @Override
-            public UserDto getUserById(Long id) {
+            public UserDto getUserById(String id) {
                 UserDto userDto = new UserDto();
                 userDto.setId(id);
                 userDto.setUsername("Unknown");

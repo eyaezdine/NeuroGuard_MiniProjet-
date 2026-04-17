@@ -34,7 +34,7 @@ app:
     dir: uploads/post-images
 
 jwt:
-  secret: XDkzF2YNPA/7vXmPYJmaACjY6VBhwHJbr4pzPF5jguE=
+  secret: dev_secret_change_in_production_abc123
 
 feign:
   client:

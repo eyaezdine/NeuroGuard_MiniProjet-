@@ -21,7 +21,7 @@ public class PostLike {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private String userId;
     @CreationTimestamp
     private LocalDateTime createdAt;
 }

@@ -25,7 +25,7 @@ public class Comment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
     @Column(nullable = false)
-    private Long authorId;
+    private String authorId;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
